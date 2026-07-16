@@ -70,6 +70,89 @@ Resolves via [`kotoba-lang/industry`](https://github.com/kotoba-lang/industry)
 See [`docs/business-model.md`](docs/business-model.md) and
 [`docs/operator-guide.md`](docs/operator-guide.md).
 
+## Actor implementation (`buildingcleaningops`)
+
+An `langgraph-clj` StateGraph actor implementing the operations-
+coordination layer of the Core Contract above: `BuildingCleaningAdvisor`
+(the contained intelligence node) → `BuildingCleaningGovernor`
+(independent censor) → staged-rollout phase gate → commit | hold |
+human-approval escalation, with an append-only audit ledger.
+
+- **Closed proposal-op allowlist**: `log-service-record`,
+  `schedule-cleaning-operation`, `coordinate-supply-order`,
+  `flag-safety-concern` (all `:effect :propose`).
+- **Three HARD governor checks** (permanent, un-overridable):
+  1. **Site unverified** — the target site's client/site-contract
+     record must exist AND be independently registered/verified in the
+     store.
+  2. **Effect is :propose** — any other `:effect` value is rejected.
+  3. **Scope exclusion** — directly finalizing a chemical-safety-
+     clearance decision, overriding a chemical-incompatibility warning,
+     direct robot/equipment actuation, and safety-authority enforcement
+     are permanently blocked. The closed op-allowlist NEVER includes an
+     op that directly finalizes a chemical-safety-clearance decision or
+     overrides an incompatibility warning — those are always a hard,
+     permanent block, never auto-commit-eligible.
+- **Two ESCALATE (SOFT) gates**, either forces human sign-off:
+  - `:flag-safety-concern` — ALWAYS escalates, regardless of confidence
+    or phase. A "flag a concern" op is never auto-commit-eligible and
+    never finalizes a chemical-safety decision itself — it only
+    surfaces the concern for a human.
+  - `:coordinate-supply-order` above a cost threshold — a large-value
+    procurement proposal always needs a human sign-off.
+  - (LLM confidence below the floor also escalates, as with every
+    sibling actor.)
+- **Staged rollout** (Phase 0→3):
+  - Phase 0: read-only
+  - Phase 1: service-record logging only (approval-gated)
+  - Phase 2: + cleaning-operation scheduling, supply-order proposals
+    (approval-gated)
+  - Phase 3: auto-commits clean, high-confidence, low-cost proposals
+    (safety concerns and high-cost supply orders always escalate)
+- **Append-only audit ledger** — every decision is an immutable log
+  entry.
+
+### Development
+
+```bash
+# Install dependencies (if inside the superproject, use :dev alias for local overrides)
+clojure -M:dev -P
+
+# Run tests
+clojure -M:dev:test
+
+# Run linter
+clojure -M:lint
+
+# Run demo
+clojure -M:dev:run
+```
+
+### Test suite
+
+- `test/buildingcleaningops/governor_test.clj` — unit tests of governor
+  hard checks, cost-threshold escalation, and scope exclusion
+  (including a dedicated regression test asserting the default
+  mock-advisor proposals never self-trip the scope-exclusion check)
+- `test/buildingcleaningops/advisor_test.clj` — advisor proposal shape
+  and consistency
+- `test/buildingcleaningops/phase_test.clj` — rollout phase logic
+- `test/buildingcleaningops/governor_contract_test.clj` — full graph
+  integration, audit trail
+- `test/buildingcleaningops/store_contract_test.clj` — Store protocol
+  and MemStore implementation
+
+### Modules
+
+- `buildingcleaningops.store` — SSoT (MemStore, String-keyed site
+  directory, append-only ledger)
+- `buildingcleaningops.advisor` — contained intelligence node (mock +
+  real-LLM seam)
+- `buildingcleaningops.governor` — independent compliance layer
+- `buildingcleaningops.phase` — staged rollout (0→3)
+- `buildingcleaningops.operation` — langgraph-clj StateGraph
+- `buildingcleaningops.sim` — demo driver
+
 ## License
 
 AGPL-3.0-or-later.

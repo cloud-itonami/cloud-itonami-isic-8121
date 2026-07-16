@@ -1,11 +1,13 @@
-{:itonami.blueprint/id "cloud-itonami-8121"
- :itonami.blueprint/name "Community Building Cleaning Operations"
- :itonami.blueprint/isic-rev5 "8121"
- :itonami.blueprint/domain :commercial/building-cleaning-services
- :itonami.blueprint/license "AGPL-3.0-or-later"
- :itonami.blueprint/social-impact [:worker-safety :public-health :local-jobs]
- :itonami.blueprint/governor :building-cleaning-governor
- :itonami.blueprint/robotics true
- :itonami.blueprint/required-technologies [:robotics :identity :forms :dmn :bpmn :audit-ledger :labor]
- :itonami.blueprint/optional-technologies [:optimization]
- :itonami.blueprint/status :public-oss}
+[{:itonami.blueprint/id "cloud-itonami-8121"
+  :itonami.blueprint/name "Community Building Cleaning Operations"
+  :itonami.blueprint/isic-rev5 "8121"
+  :itonami.blueprint/domain :commercial/building-cleaning-services
+  :itonami.blueprint/license "AGPL-3.0-or-later"
+  :itonami.blueprint/social-impact [:worker-safety :public-health :local-jobs]
+  :itonami.blueprint/governor :building-cleaning-governor
+  :itonami.blueprint/robotics true
+  :itonami.blueprint/required-technologies [:robotics :identity :forms :dmn :bpmn :audit-ledger :labor]
+  :itonami.blueprint/optional-technologies [:optimization]
+  :itonami.blueprint/status :public-oss
+  :itonami.blueprint/maturity :implemented
+  :db/id -1}]
