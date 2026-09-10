@@ -130,16 +130,16 @@ clojure -M:dev:run
 
 ### Test suite
 
-- `test/buildingcleaningops/governor_test.clj` — unit tests of governor
+- `test/buildingcleaningops/governor_test.kotoba` — unit tests of governor
   hard checks, cost-threshold escalation, and scope exclusion
   (including a dedicated regression test asserting the default
   mock-advisor proposals never self-trip the scope-exclusion check)
-- `test/buildingcleaningops/advisor_test.clj` — advisor proposal shape
+- `test/buildingcleaningops/advisor_test.kotoba` — advisor proposal shape
   and consistency
-- `test/buildingcleaningops/phase_test.clj` — rollout phase logic
-- `test/buildingcleaningops/governor_contract_test.clj` — full graph
+- `test/buildingcleaningops/phase_test.kotoba` — rollout phase logic
+- `test/buildingcleaningops/governor_contract_test.kotoba` — full graph
   integration, audit trail
-- `test/buildingcleaningops/store_contract_test.clj` — Store protocol
+- `test/buildingcleaningops/store_contract_test.kotoba` — Store protocol
   and MemStore implementation
 
 ### Modules
