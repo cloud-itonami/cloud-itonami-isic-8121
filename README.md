@@ -116,16 +116,16 @@ human-approval escalation, with an append-only audit ledger.
 
 ```bash
 # Install dependencies (if inside the superproject, use :dev alias for local overrides)
-clojure -M:dev -P
+kbb -M:dev -P
 
 # Run tests
-clojure -M:dev:test
+kbb -M:dev:test
 
 # Run linter
-clojure -M:lint
+kbb -M:lint
 
 # Run demo
-clojure -M:dev:run
+kbb -M:dev:run
 ```
 
 ### Test suite
