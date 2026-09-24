@@ -1,0 +1,34 @@
+;; What this vertical's robot physically does, declared for
+;; kotoba.robotics.process (kotoba-lang/robotics). `kbb -M:dev:physics` runs it.
+;;
+;; README "Robotics premise": autonomous floor scrubbers/vacuums and
+;; supply-restocking carts do routine janitorial and floor-care work in
+;; commercial buildings (ISIC 8121). The physical work declared here: the
+;; scrubber refills its solution tank from the janitor-closet tap through a
+;; hose, and the restocking cart carries a tall stack of paper-towel and
+;; toilet-tissue cases down the corridor, braking for people.
+;;
+;; Every number without a cited source is marked `estimate` in its :basis.
+;; Replacing an estimate with a sourced value is this bot's growth work.
+{:physics/schema "itonami.physical-ai.spec.v1"
+ :repo "cloud-itonami/cloud-itonami-isic-8121"
+ :cases
+ [{:id :scrubber-solution-refill-hose
+   :kind :pipe-flow
+   :procedure "floor scrubber refills its solution tank from the janitor-closet tap through a 15 m, 1/2 inch hose lifted 1 m to the tank inlet"
+   :params {:diameter-m 0.0127 :length-m 15.0 :roughness-m 1.5e-6 :density-kg-m3 998.0
+            :viscosity-pa-s 1.0e-3 :pump-efficiency 0.65 :elevation-m 1.0}
+   :sweep {:param :q-m3s :values [1.0e-4 2.0e-4 3.0e-4 4.0e-4 5.0e-4 6.0e-4]}
+   :quantity :pressure-drop-pa
+   :limit {:max 250000.0 :basis "estimate: usable tap pressure at the janitor sink of an office building (~2.5 bar after the backflow preventer)"}
+   :boundary {:lo 5.0e-5 :hi 8.0e-4}}
+  {:id :restock-cart-tall-stack
+   :kind :transport
+   :procedure "restocking cart carries a tall stack of paper-towel and tissue cases down the corridor and brakes hard when a person steps out"
+   :params {:mass-kg 45.0 :distance-m 60.0 :v-max-mps 1.0 :a-max-mps2 0.5
+            :brake-decel-mps2 1.5 :drive-force-n 120.0 :crr 0.015
+            :cog-height-m 0.35 :payload-cog-height-m 1.00 :support-half-length-m 0.30
+            :max-time-s 1800.0}
+   :sweep {:param :payload-kg :values [10.0 20.0 30.0 45.0 60.0]}
+   :quantity :min-tipover-margin
+   :limit {:min 0.3 :basis "estimate: keep 30 % of the static restoring moment for floor-joint bumps and a shifting stack"}}]}
